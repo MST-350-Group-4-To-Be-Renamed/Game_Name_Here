@@ -1,0 +1,621 @@
+<!--Saved by Quest 5.8.6836.13983-->
+<asl version="580">
+  <include ref="English.aslx" />
+  <include ref="Core.aslx" />
+  <game name="Test">
+    <gameid>7c07bc06-f3ef-4e09-866e-448727352abb</gameid>
+    <version>1.0</version>
+    <firstpublished>2023</firstpublished>
+    <showcommandbar type="boolean">false</showcommandbar>
+    <showlocation type="boolean">false</showlocation>
+    <turnoffcompass />
+    <commandpane type="boolean">false</commandpane>
+    <customstatuspane type="boolean">false</customstatuspane>
+    <turnoffinventory />
+    <turnoffplacesandobjects />
+    <statusandcompassattop />
+    <setbackgroundopacity type="boolean">false</setbackgroundopacity>
+    <colourblend />
+    <defaultforeground>Green</defaultforeground>
+    <defaultbackground>Black</defaultbackground>
+    <colourblendtop>Black</colourblendtop>
+    <colourblendbottom>DarkSlateGrey</colourblendbottom>
+    <defaultfontsize type="int">20</defaultfontsize>
+    <defaultwebfont>BioRhyme</defaultwebfont>
+    <defaultlinkforeground>Red</defaultlinkforeground>
+    <autodescription type="boolean">false</autodescription>
+    <showborder type="boolean">false</showborder>
+    <showdescriptiononenter />
+    <attr name="changeroom_newline" type="boolean">false</attr>
+    <echocommand type="boolean">false</echocommand>
+    <autodisplayverbs type="boolean">false</autodisplayverbs>
+    <setcustomwidth />
+    <customwidth type="int">1000</customwidth>
+    <setcustompadding />
+    <custompaddingleft type="int">5</custompaddingleft>
+    <custompaddingright type="int">5</custompaddingright>
+    <showpanes type="boolean">false</showpanes>
+    <showtitle type="boolean">false</showtitle>
+    <js><![CDATA[
+      
+	    (function ($) {
+	      	var typewriter_interrupted = false;
+		    window.onkeydown = function(e) {
+		    	typewriter_interrupted = true;
+			};
+		    window.onmousedown = function(e) {
+		    	typewriter_interrupted = true;
+			};
+		    $.fn.typewriter = function (speed) {
+		    	typewriter_interrupted = false;
+		        this.each(function () {
+		            var $ele = $(this), str = $ele.text(), progress = 0;
+		            $ele.text('');
+		            var timer = setInterval(function () {
+		                $ele.text(str.substring(0, progress++));
+		                if (typewriter_interrupted) {
+		                	$ele.text(str);
+		                	progress = str.length;
+		                }
+		                if (progress >= str.length) {
+			                clearInterval(timer);
+			                var completion = "TypewriterDone";
+							var args = completion.split(" ");
+					        ASLEvent(args[0], args[1]);
+					        ASLEvent("WaitForPress", true);
+				        }
+          			}, speed);
+		        });
+		        return this;
+		    };
+		})(jQuery);
+	  
+	         		                ]]></js>
+    <roomenter type="script">
+    </roomenter>
+    <start type="script">
+      JS.eval (game.js)
+      MoveObject (player, Title Screen)
+    </start>
+  </game>
+  <object name="Rooms">
+    <inherit name="editor_object" />
+    <object name="Lab">
+      <inherit name="editor_room" />
+      <exitslistprefix type="string"></exitslistprefix>
+      <description type="string"></description>
+      <beforeenter type="script"><![CDATA[
+        if (player.explored_lab = False) {
+          ClearScreen
+          TextFX_Typewriter ("You open your eyes, disoriented. As you look around, you recognize this space to be your lab, but everything looks and feels different.", 10)
+          SetTimerScript (txt) {
+            ClearScreen
+            TextFX_Typewriter ("You normally complain to your colleagues that you need more light in your lab, but today, it feels like it's blinding you, the dull colors of the lab equipment even more dreary.", 10)
+            SetTimerScript (txt) {
+              ClearScreen
+              TextFX_Typewriter ("As you try to get up, you realize you’ve been up this whole time, but you swear you were just passed out on the ground. You look down and see yourself laying on the ground.", 10)
+              SetTimerScript (txt) {
+                msg ("<center>That doesn’t make sense.</center>")
+                wait {
+                  ClearScreen
+                  TextFX_Typewriter ("You’ve just begun to connect the dots. You must have died and are now a ghost.", 10)
+                  SetTimerScript (txt) {
+                    msg ("<center>The body stirs.</center>")
+                    wait {
+                      ClearScreen
+                      TextFX_Typewriter ("Huh, must’ve been anxious for no reason. But if the body is stirring, then why are you still hovering over it?", 10)
+                      SetTimerScript (txt) {
+                        msg ("<center>The body groans, but does nothing to answer your question.</center>")
+                        wait {
+                          msg ("")
+                          msg ("")
+                          msg ("")
+                          msg ("")
+                          msg ("")
+                          msg ("You choose to:")
+                          msg ("{command:Lament about death:Lament about the fact that you are dead}")
+                          SetFontSize (10)
+                          msg ("")
+                          SetFontSize (20)
+                          msg ("{command:Explore Lab:Look around the lab to see if you can find clues about what killed you.}")
+                          SetFontSize (10)
+                          msg ("")
+                          SetFontSize (20)
+                          msg ("{command:Get back into body:Try to interact with the body to see if there's any way you can get back in.}")
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        else {
+          ClearScreen
+          msg ("The Lab")
+        }
+      ]]></beforeenter>
+      <exit name="Big Steel Doors" alias="Big Steel Doors" to="Hallway 1">
+        <inherit name="southdirection" />
+        <scenery type="boolean">false</scenery>
+        <prefix type="string"></prefix>
+        <suffix type="string"></suffix>
+        <runscript type="boolean">false</runscript>
+      </exit>
+      <object name="player">
+        <inherit name="editor_object" />
+        <inherit name="editor_player" />
+      </object>
+      <command name="Explore Lab">
+        <pattern type="string">Explore Lab</pattern>
+        <script>
+          ClearScreen
+          player.explored_lab = True
+          if (player.in_body) {
+            TextFX_Typewriter ("Moving upright seems to be such a struggle and you feel more like the hungover mess the morning after that halloween date than you did this morning, but somehow, you stumble your way to the desk.", 10)
+            SetTimerScript (txt) {
+              ClearScreen
+              TextFX_Typewriter ("It is hard to move anything without breaking it, and you can’t risk damaging the experiment, so you settle for swaying as you put together the pieces of what happened.", 10)
+              SetTimerScript (txt) {
+                game.time = game.time + 2
+                ClearScreen
+                TextFX_Typewriter ("There must’ve been some sort of anomaly in the conduction you hadn’t accounted for, and the experimental voltage must have electrocuted you.", 10)
+                SetTimerScript (txt) {
+                  msg ("")
+                  msg ("")
+                  msg ("")
+                  msg ("{command:go temp room:Scene 2!}")
+                }
+              }
+            }
+          }
+          else {
+            TextFX_Typewriter ("Accepting the reality that you must be a ghost, you float around your lab, trying to find out what happened. The last thing you remember was coming to the lab early to get a head start on the final touches of your experiment today.", 10)
+            SetTimerScript (txt) {
+              ClearScreen
+              TextFX_Typewriter ("After a few frustrating attempts, you realize that you can’t touch anything, but based on what you can see, you connect the dots:", 10)
+              SetTimerScript (txt) {
+                msg ("")
+                msg ("{colour:yellow:There must’ve been some sort of anomaly in the conduction you hadn’t accounted for, and the experimental voltage must have electrocuted you.}")
+                wait {
+                  game.time = game.time + 2
+                  ClearScreen
+                  TextFX_Typewriter ("However, if you are still here, present as a ghost, there might be a possibility that you might be able to get back into your body.", 10)
+                  SetTimerScript (txt) {
+                    msg ("")
+                    msg ("")
+                    msg ("")
+                    msg ("{command:Get back into body:Go back to your body}")
+                  }
+                }
+              }
+            }
+          }
+        </script>
+      </command>
+      <command name="Get back into body">
+        <pattern type="string">Get back into body</pattern>
+        <script><![CDATA[
+          player.in_body = True
+          ClearScreen
+          TextFX_Typewriter ("You randomly think of the aspiring occultist you dated in college, as you often do when life gets weird.", 10)
+          SetTimerScript (txt) {
+            msg ("")
+            msg ("{colour:blue:-And if this doesn’t count as weird, you don’t know what else would-}")
+            wait {
+              game.time = game.time + 2
+              ClearScreen
+              TextFX_Typewriter ("You specifically remember a date on Halloween when they took you to a cemetery in an attempt to conjure the dead.", 10)
+              SetTimerScript (txt) {
+                ClearScreen
+                TextFX_Typewriter ("Although it’s hard to remember the specifics of what happened that night given the dangerous levels of substances in your system at the time, it is the only lead you have in resurrection.", 10)
+                SetTimerScript (txt) {
+                  ClearScreen
+                  TextFX_Typewriter ("You float around your body, trying to mimic your ex’s actions and words to the best of your ability.", 10)
+                  SetTimerScript (txt) {
+                    msg ("<center>Nothing happens.</center>")
+                    wait {
+                      game.time = game.time + 2
+                      ClearScreen
+                      TextFX_Typewriter ("You try again.", 10)
+                      SetTimerScript (txt) {
+                        msg ("<center>Nothing.</center>")
+                        wait {
+                          game.time = game.time + 3
+                          ClearScreen
+                          TextFX_Typewriter ("Just as you’re beginning to lose hope, your body twitches, and you feel yourself being dragged to it.", 10)
+                          SetTimerScript (txt) {
+                            ClearScreen
+                            TextFX_Typewriter ("You repeat the butchered incantation, this time more optimistic, and your body and soul merge into one once again.", 10)
+                            SetTimerScript (txt) {
+                              if (player.explored_lab) {
+                                msg ("")
+                                msg ("")
+                                msg ("")
+                                msg ("{command:go temp room:Scene 2!}")
+                              }
+                              else {
+                                msg ("")
+                                msg ("")
+                                msg ("")
+                                msg ("{command:Explore Lab:Try to figure out what happened to you.}")
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]]></script>
+      </command>
+      <command name="Lament about death">
+        <script><![CDATA[
+          ClearScreen
+          TextFX_Typewriter ("It’s time to come to terms with the fact that you died.", 30)
+          SetTimerScript (txt) {
+            ClearScreen
+            TextFX_Typewriter ("No amount of sleuthing or haunting will change that, so it doesn’t really matter how you died.", 30)
+            SetTimerScript (txt) {
+              ClearScreen
+              TextFX_Typewriter ("You fade into nothingness and your life becomes a distant memory…", 30)
+              SetTimerScript (txt) {
+                SetFontSize (50)
+                msg ("")
+                msg ("")
+                msg ("<center>{colour:red:Game Over}</center>")
+                wait {
+                  SetFontSize (20)
+                  // player.last = Lab
+                  msg ("")
+                  msg ("")
+                  msg ("")
+                  msg ("{command:go temp room:Restart}")
+                }
+              }
+            }
+          }
+        ]]></script>
+        <pattern type="string">Lament about death</pattern>
+      </command>
+    </object>
+    <object name="Conference Room">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+      </beforeenter>
+      <exit alias="south" to="Hallway 2">
+        <inherit name="southdirection" />
+      </exit>
+    </object>
+    <object name="Meeting Room">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="west" to="Hallway 8">
+        <inherit name="westdirection" />
+      </exit>
+    </object>
+    <object name="Office Friendly">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 3">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Office Boss">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 4">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Office Selfish">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 4">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Office Player">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 5">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Electrical Room">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 8">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Kitchen">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="northeast" to="Hallway 7">
+        <inherit name="northeastdirection" />
+      </exit>
+      <exit alias="southwest" to="Hallway 4">
+        <inherit name="southwestdirection" />
+      </exit>
+    </object>
+    <object name="Foyer">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="west" to="Hallway 6">
+        <inherit name="westdirection" />
+      </exit>
+      <exit name="Locked Path" alias="Locked Path" to="Mystery Path">
+        <inherit name="eastdirection" />
+        <locked />
+        <object name="Mystery Path">
+          <inherit name="editor_room" />
+        </object>
+      </exit>
+      <object name="Hallway 3">
+        <inherit name="editor_room" />
+        <beforeenter type="script">
+          ClearScreen
+        </beforeenter>
+        <exit alias="south" to="Hallway 4">
+          <inherit name="southdirection" />
+        </exit>
+        <exit alias="west" to="Office Friendly">
+          <inherit name="westdirection" />
+        </exit>
+        <exit alias="north" to="Hallway 2">
+          <inherit name="northdirection" />
+        </exit>
+      </object>
+    </object>
+  </object>
+  <object name="Hallways">
+    <inherit name="editor_object" />
+    <alias>Hallways</alias>
+    <visible type="boolean">false</visible>
+    <object name="Hallway 1">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="north" to="Lab">
+        <inherit name="northdirection" />
+      </exit>
+      <exit alias="west" to="Hallway 2">
+        <inherit name="westdirection" />
+      </exit>
+    </object>
+    <object name="Hallway 2">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 1">
+        <inherit name="eastdirection" />
+      </exit>
+      <exit alias="north" to="Conference Room">
+        <inherit name="northdirection" />
+      </exit>
+      <exit alias="southeast" to="Hallway 8">
+        <inherit name="southeastdirection" />
+      </exit>
+      <exit alias="southwest" to="Hallway 3">
+        <inherit name="southwestdirection" />
+      </exit>
+    </object>
+    <object name="Hallway 4">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="north" to="Hallway 3">
+        <inherit name="northdirection" />
+      </exit>
+      <exit alias="west" to="Office Boss">
+        <inherit name="westdirection" />
+      </exit>
+      <exit alias="south" to="Hallway 5">
+        <inherit name="southdirection" />
+      </exit>
+      <exit alias="southwest" to="Office Selfish">
+        <inherit name="southwestdirection" />
+      </exit>
+      <exit alias="east" to="Kitchen">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Hallway 5">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="east" to="Hallway 6">
+        <inherit name="eastdirection" />
+      </exit>
+      <exit alias="north" to="Hallway 4">
+        <inherit name="northdirection" />
+      </exit>
+    </object>
+    <object name="Hallway 6">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="west" to="Hallway 5">
+        <inherit name="westdirection" />
+      </exit>
+      <exit alias="north" to="Hallway 7">
+        <inherit name="northdirection" />
+      </exit>
+      <exit alias="east" to="Foyer">
+        <inherit name="eastdirection" />
+      </exit>
+    </object>
+    <object name="Hallway 7">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="northwest" to="Hallway 8">
+        <inherit name="northwestdirection" />
+      </exit>
+      <exit alias="southeast" to="Hallway 6">
+        <inherit name="southeastdirection" />
+      </exit>
+      <exit alias="south" to="Kitchen">
+        <inherit name="southdirection" />
+      </exit>
+    </object>
+    <object name="Hallway 8">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreen
+      </beforeenter>
+      <exit alias="southeast" to="Hallway 7">
+        <inherit name="southeastdirection" />
+      </exit>
+      <exit alias="west" to="Electrical Room">
+        <inherit name="westdirection" />
+      </exit>
+      <exit alias="east" to="Meeting Room">
+        <inherit name="eastdirection" />
+      </exit>
+      <exit alias="north" to="Hallway 2">
+        <inherit name="northdirection" />
+      </exit>
+    </object>
+  </object>
+  <object name="Title Screen">
+    <inherit name="editor_room" />
+    <descprefix type="string"></descprefix>
+    <objectslistprefix type="string"></objectslistprefix>
+    <beforeenter type="script"><![CDATA[
+      ClearScreen
+      init_starting_variables
+      SetFontSize (40)
+      TextFX_Unscramble ("<center>Already Dead:</center>", 200, 1)
+      TextFX_Unscramble ("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Huge Discovery", 200, 1)
+      SetFontSize (20)
+      TextFX_Unscramble ("<center>(still a working title)</center>", 100, 1)
+      SetTimeout (5) {
+        ClearScreen
+        SetFontSize (18)
+        msg ("")
+        TextFX_Typewriter (" A Game By:", 10)
+        SetFontSize (50)
+        TextFX_Unscramble ("<center>The Sentient Potatoes</center>", 200, 3)
+        SetFontSize (15)
+        msg ("")
+        msg ("")
+        msg ("")
+        msg ("")
+        msg ("")
+        msg ("")
+        msg ("")
+        msg ("")
+        TextFX_Typewriter ("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alan Ogaranko, Danic Crispin, Luke Huang,", 10)
+        TextFX_Typewriter ("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maryam Khan, Simba Mhute, Victoria Cairns", 10)
+        SetTimeout (2) {
+          SetFontSize (20)
+          msg ("")
+          msg ("")
+          msg ("")
+          msg ("")
+          TextFX_Typewriter ("Press Any Key To Continue", 10)
+          SetTimerScript (txt) {
+            MoveObject (player, Lab)
+          }
+        }
+      }
+    ]]></beforeenter>
+  </object>
+  <object name="TempRoom">
+    <inherit name="editor_room" />
+    <exitslistprefix type="string"></exitslistprefix>
+    <isopen />
+    <alias>TempRoom</alias>
+    <usedefaultprefix type="boolean">false</usedefaultprefix>
+    <beforeenter type="script">
+      MoveObject (game.pov, player.last)
+    </beforeenter>
+  </object>
+  <command name="go temp room">
+    <pattern type="string">go temp room</pattern>
+    <script>
+      game.pov.last = game.pov.parent
+      game.pov.parent = TempRoom
+    </script>
+  </command>
+  <function name="init_starting_variables">
+    game.time = (9*60)+27
+    player.explored_lab = false
+    player.in_body = false
+    player.found_time_limit = false
+    player.wait_for_press = false
+    player.found_potatoe = false
+  </function>
+  <function name="ClearScreenGetTime">
+    ClearScreen
+    DisplayTime
+  </function>
+  <function name="DisplayTime"><![CDATA[
+    time_in_min = game.time
+    minutes = time_in_min % 60
+    hours = time_in_min / 60
+    if (minutes < 10) {
+      str = "0"
+    }
+    else {
+      str = ""
+    }
+    time_limit_string = ""
+    if (player.found_time_limit) {
+      time_limit_string = time_limit_string + "<right>               " + "Time Remaining: "
+      minutes_remaining = ((15 * 60) + 30) - time_in_min
+      time_limit_string = time_limit_string + (minutes_remaining / 60) + "hr" + (minutes_remaining % 60) + "min" + "</right>"
+    }
+    msg ("<left>Clock: " + hours + ":" + str + minutes + "</left>" + time_limit_string)
+    msg ("<right>-----------------------------</right>")
+    SetFontSize (20)
+  ]]></function>
+  <function name="TypewriterDone" parameters="param">
+    request (Show, "Command")
+    request (Hide, "Command")
+  </function>
+  <function name="WaitForPress" parameters="extra">
+    player.wait_for_press = true
+    JS.Hook ("_wait_for_press")
+  </function>
+  <function name="_wait_for_press" parameters="key">
+    if (player.wait_for_press) {
+      player.wait_for_press = false
+      if (not txt.script = null) {
+        invoke (txt.script)
+      }
+    }
+  </function>
+  <javascript src="glue.js" />
+  <timer name="txt">
+    <interval>1</interval>
+  </timer>
+</asl>
