@@ -2,7 +2,8 @@
 <asl version="580">
   <include ref="English.aslx" />
   <include ref="Core.aslx" />
-  <game name="Test">
+  <include ref="AudioVideoLib.aslx" />
+  <game name="Already Dead: Huge Discovery">
     <gameid>7c07bc06-f3ef-4e09-866e-448727352abb</gameid>
     <version>1.0</version>
     <firstpublished>2023</firstpublished>
@@ -70,7 +71,8 @@
 		    };
 		})(jQuery);
 	  
-	         		                ]]></js>
+	         		                                                        ]]></js>
+    <publishfileextensions>*.jpg;*.jpeg;*.png;*.gif;*.js;*.wav;*.mp3;*.htm;*.html;*.svg;*.ogg;*.ogv</publishfileextensions>
     <roomenter type="script">
     </roomenter>
     <start type="script">
@@ -84,27 +86,41 @@
       <inherit name="editor_room" />
       <exitslistprefix type="string"></exitslistprefix>
       <description type="string"></description>
-      <beforeenter type="script"><![CDATA[
-        if (player.explored_lab = False) {
+      <beforeenter type="script">
+        switch (player.scene) {
+          case (1) {
+            MoveObject (player, Scene_1)
+          }
+          case (2) {
+            MoveObject (player, Scene_2)
+          }
+          default {
+            msg ("The Lab")
+          }
+        }
+      </beforeenter>
+      <object name="player">
+        <inherit name="editor_player" />
+        <inherit name="editor_object" />
+        <scenery type="boolean">false</scenery>
+      </object>
+      <object name="Scene_1">
+        <inherit name="editor_room" />
+        <beforeenter type="script"><![CDATA[
           ClearScreen
-          TextFX_Typewriter ("You open your eyes, disoriented. As you look around, you recognize this space to be your lab, but everything looks and feels different.", 10)
-          SetTimerScript (txt) {
+          type ("You open your eyes, disoriented. As you look around, you recognize this space to be your lab, but everything looks and feels different.") {
             ClearScreen
-            TextFX_Typewriter ("You normally complain to your colleagues that you need more light in your lab, but today, it feels like it's blinding you, the dull colors of the lab equipment even more dreary.", 10)
-            SetTimerScript (txt) {
+            type ("You normally complain to your colleagues that you need more light in your lab, but today, it feels like it's blinding you, the dull colors of the lab equipment even more dreary.") {
               ClearScreen
-              TextFX_Typewriter ("As you try to get up, you realize you’ve been up this whole time, but you swear you were just passed out on the ground. You look down and see yourself laying on the ground.", 10)
-              SetTimerScript (txt) {
+              type ("As you try to get up, you realize you’ve been up this whole time, but you swear you were just passed out on the ground. You look down and see yourself laying on the ground.") {
                 msg ("<center>That doesn’t make sense.</center>")
                 wait {
-                  ClearScreen
-                  TextFX_Typewriter ("You’ve just begun to connect the dots. You must have died and are now a ghost.", 10)
-                  SetTimerScript (txt) {
+                  ClearScreenGetTime
+                  type ("You’ve just begun to connect the dots. You must have died and are now a ghost.") {
                     msg ("<center>The body stirs.</center>")
                     wait {
-                      ClearScreen
-                      TextFX_Typewriter ("Huh, must’ve been anxious for no reason. But if the body is stirring, then why are you still hovering over it?", 10)
-                      SetTimerScript (txt) {
+                      ClearScreenGetTime
+                      type ("Huh, must’ve been anxious for no reason. But if the body is stirring, then why are you still hovering over it?") {
                         msg ("<center>The body groans, but does nothing to answer your question.</center>")
                         wait {
                           msg ("")
@@ -113,14 +129,8 @@
                           msg ("")
                           msg ("")
                           msg ("You choose to:")
-                          msg ("{command:Lament about death:Lament about the fact that you are dead}")
-                          SetFontSize (10)
-                          msg ("")
-                          SetFontSize (20)
+                          msg ("{command:Lament about death:Lament about the fact that you are dead.}")
                           msg ("{command:Explore Lab:Look around the lab to see if you can find clues about what killed you.}")
-                          SetFontSize (10)
-                          msg ("")
-                          SetFontSize (20)
                           msg ("{command:Get back into body:Try to interact with the body to see if there's any way you can get back in.}")
                         }
                       }
@@ -130,116 +140,48 @@
               }
             }
           }
-        }
-        else {
-          ClearScreen
-          msg ("The Lab")
-        }
-      ]]></beforeenter>
-      <exit name="Big Steel Doors" alias="Big Steel Doors" to="Hallway 1">
-        <inherit name="southdirection" />
-        <scenery type="boolean">false</scenery>
-        <prefix type="string"></prefix>
-        <suffix type="string"></suffix>
-        <runscript type="boolean">false</runscript>
-      </exit>
-      <object name="player">
-        <inherit name="editor_object" />
-        <inherit name="editor_player" />
-      </object>
-      <command name="Explore Lab">
-        <pattern type="string">Explore Lab</pattern>
-        <script>
-          ClearScreen
-          player.explored_lab = True
-          if (player.in_body) {
-            TextFX_Typewriter ("Moving upright seems to be such a struggle and you feel more like the hungover mess the morning after that halloween date than you did this morning, but somehow, you stumble your way to the desk.", 10)
-            SetTimerScript (txt) {
-              ClearScreen
-              TextFX_Typewriter ("It is hard to move anything without breaking it, and you can’t risk damaging the experiment, so you settle for swaying as you put together the pieces of what happened.", 10)
-              SetTimerScript (txt) {
-                game.time = game.time + 2
-                ClearScreen
-                TextFX_Typewriter ("There must’ve been some sort of anomaly in the conduction you hadn’t accounted for, and the experimental voltage must have electrocuted you.", 10)
-                SetTimerScript (txt) {
-                  msg ("")
-                  msg ("")
-                  msg ("")
-                  msg ("{command:go temp room:Scene 2!}")
-                }
-              }
-            }
-          }
-          else {
-            TextFX_Typewriter ("Accepting the reality that you must be a ghost, you float around your lab, trying to find out what happened. The last thing you remember was coming to the lab early to get a head start on the final touches of your experiment today.", 10)
-            SetTimerScript (txt) {
-              ClearScreen
-              TextFX_Typewriter ("After a few frustrating attempts, you realize that you can’t touch anything, but based on what you can see, you connect the dots:", 10)
-              SetTimerScript (txt) {
-                msg ("")
-                msg ("{colour:yellow:There must’ve been some sort of anomaly in the conduction you hadn’t accounted for, and the experimental voltage must have electrocuted you.}")
-                wait {
-                  game.time = game.time + 2
-                  ClearScreen
-                  TextFX_Typewriter ("However, if you are still here, present as a ghost, there might be a possibility that you might be able to get back into your body.", 10)
-                  SetTimerScript (txt) {
-                    msg ("")
-                    msg ("")
-                    msg ("")
-                    msg ("{command:Get back into body:Go back to your body}")
-                  }
-                }
-              }
-            }
-          }
-        </script>
-      </command>
-      <command name="Get back into body">
-        <pattern type="string">Get back into body</pattern>
-        <script><![CDATA[
-          player.in_body = True
-          ClearScreen
-          TextFX_Typewriter ("You randomly think of the aspiring occultist you dated in college, as you often do when life gets weird.", 10)
-          SetTimerScript (txt) {
-            msg ("")
-            msg ("{colour:blue:-And if this doesn’t count as weird, you don’t know what else would-}")
-            wait {
-              game.time = game.time + 2
-              ClearScreen
-              TextFX_Typewriter ("You specifically remember a date on Halloween when they took you to a cemetery in an attempt to conjure the dead.", 10)
-              SetTimerScript (txt) {
-                ClearScreen
-                TextFX_Typewriter ("Although it’s hard to remember the specifics of what happened that night given the dangerous levels of substances in your system at the time, it is the only lead you have in resurrection.", 10)
-                SetTimerScript (txt) {
-                  ClearScreen
-                  TextFX_Typewriter ("You float around your body, trying to mimic your ex’s actions and words to the best of your ability.", 10)
-                  SetTimerScript (txt) {
-                    msg ("<center>Nothing happens.</center>")
-                    wait {
-                      game.time = game.time + 2
-                      ClearScreen
-                      TextFX_Typewriter ("You try again.", 10)
-                      SetTimerScript (txt) {
-                        msg ("<center>Nothing.</center>")
-                        wait {
-                          game.time = game.time + 3
-                          ClearScreen
-                          TextFX_Typewriter ("Just as you’re beginning to lose hope, your body twitches, and you feel yourself being dragged to it.", 10)
-                          SetTimerScript (txt) {
-                            ClearScreen
-                            TextFX_Typewriter ("You repeat the butchered incantation, this time more optimistic, and your body and soul merge into one once again.", 10)
-                            SetTimerScript (txt) {
-                              if (player.explored_lab) {
-                                msg ("")
-                                msg ("")
-                                msg ("")
-                                msg ("{command:go temp room:Scene 2!}")
-                              }
-                              else {
-                                msg ("")
-                                msg ("")
-                                msg ("")
-                                msg ("{command:Explore Lab:Try to figure out what happened to you.}")
+        ]]></beforeenter>
+        <command name="Get back into body">
+          <pattern type="string">Get back into body</pattern>
+          <script><![CDATA[
+            player.in_body = True
+            ClearScreenGetTime
+            type ("You randomly think of the aspiring occultist you dated in college, as you often do when life gets weird.") {
+              msg ("")
+              msg ("{colour:blue:-And if this doesn’t count as weird, you don’t know what else would-}")
+              wait {
+                ClearScreenGetTime
+                type ("You specifically remember a date on Halloween when they took you to a cemetery in an attempt to conjure the dead.") {
+                  ClearScreenGetTime
+                  type ("Although it’s hard to remember the specifics of what happened that night given the dangerous levels of substances in your system at the time, it is the only lead you have in resurrection.") {
+                    ClearScreenGetTime
+                    type ("You float around your body, trying to mimic your ex’s actions and words to the best of your ability.") {
+                      msg ("<center>Nothing happens.</center>")
+                      wait {
+                        add_time (2)
+                        ClearScreenGetTime
+                        type ("You try again.") {
+                          msg ("<center>Nothing.</center>")
+                          wait {
+                            add_time (2)
+                            ClearScreenGetTime
+                            type ("Just as you’re beginning to lose hope, your body twitches, and you feel yourself being dragged to it.") {
+                              ClearScreenGetTime
+                              type ("You repeat the butchered incantation, this time more optimistic, and your body and soul merge into one once again.") {
+                                add_time (3)
+                                if (player.explored_lab) {
+                                  msg ("")
+                                  msg ("")
+                                  msg ("")
+                                  player.scene = 2
+                                  MoveObject (player, Lab)
+                                }
+                                else {
+                                  msg ("")
+                                  msg ("")
+                                  msg ("")
+                                  msg ("{command:Explore Lab:Try to figure out what happened to you.}")
+                                }
                               }
                             }
                           }
@@ -250,121 +192,635 @@
                 }
               }
             }
-          }
-        ]]></script>
-      </command>
-      <command name="Lament about death">
-        <script><![CDATA[
-          ClearScreen
-          TextFX_Typewriter ("It’s time to come to terms with the fact that you died.", 30)
-          SetTimerScript (txt) {
+          ]]></script>
+        </command>
+        <command name="Lament about death">
+          <pattern type="string">Lament about death</pattern>
+          <script><![CDATA[
             ClearScreen
-            TextFX_Typewriter ("No amount of sleuthing or haunting will change that, so it doesn’t really matter how you died.", 30)
-            SetTimerScript (txt) {
+            type ("It’s time to come to terms with the fact that you died.") {
               ClearScreen
-              TextFX_Typewriter ("You fade into nothingness and your life becomes a distant memory…", 30)
-              SetTimerScript (txt) {
+              type ("No amount of sleuthing or haunting will change that, so it doesn’t really matter how you died.") {
+                ClearScreen
+                type ("You fade into nothingness and your life becomes a distant memory…") {
+                  SetFontSize (50)
+                  msg ("")
+                  msg ("")
+                  msg ("<center>{colour:red:Game Over}</center>")
+                  wait {
+                    SetFontSize (20)
+                    msg ("")
+                    msg ("")
+                    msg ("")
+                    msg ("{command:reset scene 1:Restart}")
+                  }
+                }
+              }
+            }
+          ]]></script>
+        </command>
+        <command name="Explore Lab">
+          <pattern type="string">Explore Lab</pattern>
+          <script>
+            ClearScreenGetTime
+            player.explored_lab = True
+            add_time (2)
+            if (player.in_body) {
+              type ("Moving upright seems to be such a struggle and you feel more like the hungover mess the morning after that halloween date than you did this morning, but somehow, you stumble your way to the desk.") {
+                ClearScreenGetTime
+                type ("It is hard to move anything without breaking it, and you can’t risk damaging the experiment, so you settle for swaying as you put together the pieces of what happened.") {
+                  ClearScreenGetTime
+                  type ("There must’ve been some sort of anomaly in the conduction you hadn’t accounted for, and the experimental voltage must have electrocuted you.") {
+                    msg ("")
+                    msg ("")
+                    msg ("")
+                    player.scene = 2
+                    MoveObject (player, Lab)
+                  }
+                }
+              }
+            }
+            else {
+              type ("Accepting the reality that you must be a ghost, you float around your lab, trying to find out what happened. The last thing you remember was coming to the lab early to get a head start on the final touches of your experiment today.") {
+                ClearScreenGetTime
+                type ("After a few frustrating attempts, you realize that you can’t touch anything, but based on what you can see, you connect the dots:") {
+                  msg ("")
+                  msg ("{colour:yellow:There must’ve been some sort of anomaly in the conduction you hadn’t accounted for, and the experimental voltage must have electrocuted you.}")
+                  wait {
+                    ClearScreenGetTime
+                    type ("However, if you are still here, present as a ghost, there might be a possibility that you might be able to get back into your body.") {
+                      msg ("")
+                      msg ("")
+                      msg ("")
+                      msg ("{command:Get back into body:Go back to your body}")
+                    }
+                  }
+                }
+              }
+            }
+          </script>
+        </command>
+      </object>
+      <object name="Scene_2">
+        <inherit name="editor_room" />
+        <beforeenter type="script">
+          if (this.visited) {
+            ClearScreenGetTime
+            type ("The Lab") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:Take nap: Take a nap.}")
+              if (player.buttons = false) {
+                msg ("{command:Fix from lab:Try to fix the problem from your lab.}")
+              }
+              else {
+                msg ("{command:Hit red button:Hit the RED Button.}")
+              }
+              if (player.more_info = false) {
+                msg ("{command:Get more info:Try to get more information.}")
+              }
+              else {
+                msg ("{command:hallway_1:Exit the lab.}")
+              }
+            }
+          }
+        </beforeenter>
+        <beforefirstenter type="script"><![CDATA[
+          ClearScreenGetTime
+          player.time_scene_2 = game.time
+          player.buttons = false
+          player.more_info = false
+          type ("It must be the near-death experience, but your hands don’t seem to want to cooperate. As you look at the numbers of your latest experiment, your body protesting every step of the way, you realize that it wasn’t a near-death experience.") {
+            msg ("<center>You not only died, but you’re still dead.</center>")
+            wait {
+              ClearScreenGetTime
+              type ("The electrocution, combined with the biological specimen you were testing, modified your cells and now you are still dead, but somehow still alive.") {
+                msg ("<center>The living dead.</center>")
+                wait {
+                  type ("Your specimen is now a zombie virus.") {
+                    ClearScreenGetTime
+                    type ("You’re not sure how to fix the problem, but you’re sure that if the electric current messed with the specimen here, it could have reacted with the specimen that was being prepped for the investors to see.") {
+                      ClearScreenGetTime
+                      type ("If there is something wrong with those specimens as well, then it’s possible that they might also become zombies if they get too close.") {
+                        ClearScreenGetTime
+                        msg ("...")
+                        wait {
+                          player.found_time_limit = true
+                          ClearScreenGetTime
+                          type ("Somehow, even after death, the panic makes it hard to breathe and your body starts to fall.") {
+                            ClearScreenGetTime
+                            type ("You force yourself to take deep breaths and try to hold yourself upright as you try to figure out what to do.") {
+                              MoveObject (player, Lab)
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]]></beforefirstenter>
+        <firstenter type="script">
+        </firstenter>
+        <command name="Fix from lab">
+          <pattern>Fix from lab</pattern>
+          <script>
+            ClearScreenGetTime
+            type ("There might still be a chance for you to fix this from your lab. You recall the panel that your boss had installed in the event of an emergency. On the panel are two buttons.") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:Hit red button:Hit the RED Button.}")
+              msg ("{command:Hit blue button:Hit the BLUE Button.}")
+            }
+          </script>
+        </command>
+        <command name="Get more info">
+          <pattern>Get more info</pattern>
+          <script>
+            ClearScreenGetTime
+            add_time (3)
+            type ("There has to be a solution to this virus somewhere.") {
+              ClearScreenGetTime
+              type ("Your body has a strong impulse to wander around until inspiration strikes, but you think that’s a waste of time.") {
+                ClearScreenGetTime
+                type ("You should probably head to the main office to see if there’s a clue in the findings your colleagues reported, no matter how much your body needs a walk.") {
+                  player.objective = "(Find your Office)"
+                  player.more_info = true
+                  MoveObject (player, Lab)
+                }
+              }
+            }
+          </script>
+        </command>
+        <command name="Hit red button">
+          <pattern>Hit red button</pattern>
+          <script><![CDATA[
+            ClearScreen
+            type ("The infection is immediately released to the entire facility. You helplessly watch your colleagues get infected and destroy the base.") {
+              ClearScreen
+              type ("There is nothing you can do but wait for the investors to show up to the disaster and shut it down. They’ll obviously know that it was your fault and fire you on the spot.") {
                 SetFontSize (50)
                 msg ("")
                 msg ("")
                 msg ("<center>{colour:red:Game Over}</center>")
                 wait {
                   SetFontSize (20)
-                  // player.last = Lab
                   msg ("")
                   msg ("")
                   msg ("")
-                  msg ("{command:go temp room:Restart}")
+                  msg ("{command:reset scene 2:Restart}")
                 }
               }
             }
-          }
-        ]]></script>
-        <pattern type="string">Lament about death</pattern>
-      </command>
+          ]]></script>
+        </command>
+        <command name="Hit blue button">
+          <pattern>Hit blue button</pattern>
+          <script><![CDATA[
+            ClearScreenGetTime
+            type ("Nothing happens.") {
+              add_time (10)
+              ClearScreenGetTime
+              type ("What was even the point of these buttons?") {
+                ClearScreenGetTime
+                type ("<center>To be fair, you couldn't really expect much else from you incompetent boss.</center>") {
+                  ClearScreenGetTime
+                  type ("Once you’re promoted, you’ll change things here for the better, you just know it.") {
+                    player.buttons = true
+                    MoveObject (player, Lab)
+                  }
+                }
+              }
+            }
+          ]]></script>
+        </command>
+        <command name="Take nap">
+          <pattern>Take nap</pattern>
+          <script><![CDATA[
+            ClearScreenGetTime
+            type ("There’s no way you can tell your boss what would happen, or you’ll never get the promotion you’ve been trying so hard to get.") {
+              ClearScreenGetTime
+              type ("Today was supposed to be your big day and now you’re dead and the investors will be so disappointed when they see your failed experiments.") {
+                ClearScreenGetTime
+                type ("You find yourself growing more and more exhausted just by the prospect of finding a solution when there’s clearly no possible solution.") {
+                  ClearScreenGetTime
+                  type ("Maybe if you just take a small nap you’ll wake up and find out that this was all a very bad dream...") {
+                    ClearScreenGetTime
+                    game.time = 930
+                    type (". . .") {
+                      ClearScreenGetTime
+                      type ("You wake up to the sound of a crash followed by screaming.") {
+                        ClearScreenGetTime
+                        type ("Your body is more cooperative as you try to get up and figure out what happened, but what you find out makes you want to wish you were still sleeping.") {
+                          ClearScreen
+                          type ("The virus spread while you were asleep and now the entire facility is on fire as your decaying colleagues stumble around groaning.") {
+                            SetFontSize (50)
+                            msg ("")
+                            msg ("")
+                            msg ("<center>{colour:red:Game Over}</center>")
+                            wait {
+                              SetFontSize (20)
+                              msg ("")
+                              msg ("")
+                              msg ("")
+                              msg ("{command:reset scene 2:Restart}")
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]]></script>
+        </command>
+      </object>
     </object>
     <object name="Conference Room">
       <inherit name="editor_room" />
       <beforeenter type="script">
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("The Conference Room") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="south" to="Hallway 2">
-        <inherit name="southdirection" />
-      </exit>
     </object>
     <object name="Meeting Room">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("The Meeting Room") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="west" to="Hallway 8">
-        <inherit name="westdirection" />
-      </exit>
     </object>
-    <object name="Office Friendly">
+    <object name="Office Bobby">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("Bobby's Office") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 3">
-        <inherit name="eastdirection" />
-      </exit>
     </object>
     <object name="Office Boss">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("Boss's Office") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 4">
-        <inherit name="eastdirection" />
-      </exit>
     </object>
-    <object name="Office Selfish">
+    <object name="Office NPC A">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("NPC A's Office") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 4">
-        <inherit name="eastdirection" />
-      </exit>
     </object>
     <object name="Office Player">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          case (2) {
+            MoveObject (player, Scene_3)
+          }
+          case (3) {
+            MoveObject (player, Scene_3)
+          }
+          case (4) {
+            MoveObject (player, Scene_4)
+          }
+          case (6) {
+            MoveObject (player, Scene_3)
+          }
+          default {
+            ClearScreenGetTime
+            type ("Your Office") {
+              type ("There isn't much to look at here.") {
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("{command:hallway_5:Exit Office.}")
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 5">
-        <inherit name="eastdirection" />
-      </exit>
+      <object name="Scene_3">
+        <inherit name="editor_room" />
+        <beforeenter type="script"><![CDATA[
+          if (this.visited) {
+            ClearScreenGetTime
+            type ("Your Office") {
+              msg ("")
+              msg ("")
+              msg ("")
+              if (not player.filing_cabinet) {
+                msg ("{command:Filing cabinet:Check the Filing Cabinet.}")
+              }
+              if (not player.cute_videos) {
+                msg ("{command:Cute videos:Look at the Videos.}")
+              }
+              if (player.anger >= 4) {
+                msg ("{command:Take nap 2:Take a Nap.}")
+              }
+              msg ("{command:Desk papers:Have a look through the papers on the desk.}")
+            }
+          }
+        ]]></beforeenter>
+        <firstenter type="script">
+          player.objective = ""
+          player.curr_scene = player.scene
+          player.anger_scene_3 = player.anger
+          player.time_scene_3 = game.time
+          player.filing_cabinet = false
+          player.cute_videos = false
+          player.desk_papers = false
+          type ("You manage to get to the office without anyone seeing you. You sit down at the desk and start sifting through the facility’s digital network.") {
+            type ("You won’t find much help there, but one of your colleagues shared some videos of their pets doing silly things and it piques your diminishing attention span.") {
+              MoveObject (player, Office Player)
+            }
+          }
+        </firstenter>
+        <command name="Filing cabinet">
+          <pattern>Filing cabinet</pattern>
+          <script><![CDATA[
+            ClearScreenGetTime
+            type ("You’re on a mission and no amount of cuteness can deter you. You check out the filing cabinet, but as you’re aimlessly sifting through the files, one of your hands stops cooperating.") {
+              ClearScreenGetTime
+              type ("You stubbornly use that hand to pull a file out, but your finger pops loose and falls out.") {
+                msg ("<center>Right!")
+                wait {
+                  ClearScreenGetTime
+                  type ("You had forgotten for a moment that you were now a zombie and you were decaying rapidly. Anxiety grows in you again as you wonder if you even have time to be upright by the time the investors come.") {
+                    player.filing_cabinet = true
+                    MoveObject (player, Office Player)
+                  }
+                }
+              }
+            }
+          ]]></script>
+        </command>
+        <command name="Cute videos">
+          <pattern>Cute videos</pattern>
+          <script>
+            ClearScreenGetTime
+            type ("The cute kitten videos make you smile and also help clear your head.") {
+              ClearScreenGetTime
+              type ("You feel more confident that you can find a cure in time. You must, for the sake of your promotion… and the precious kittens.") {
+                player.cute_videos = true
+                player.anger = 0
+                MoveObject (player, Office Player)
+              }
+            }
+          </script>
+        </command>
+        <command name="Take nap 2">
+          <pattern>Take nap 2</pattern>
+          <script><![CDATA[
+            ClearScreenGetTime
+            type ("You find yourself growing more and more exhausted just by the prospect of finding a solution when there’s clearly no possible solution.") {
+              ClearScreenGetTime
+              type ("Maybe if you just take a small nap you’ll wake up and find out that this was all a very bad dream…") {
+                ClearScreenGetTime
+                game.time = 930
+                type (". . .") {
+                  ClearScreenGetTime
+                  type ("You wake up to the sound of a crash followed by screaming.") {
+                    ClearScreenGetTime
+                    type ("Your body is more cooperative as you try to get up and figure out what happened, but what you find out makes you want to wish you were still sleeping.") {
+                      ClearScreen
+                      type ("The virus spread while you were asleep and now the entire facility is on fire as your decaying colleagues stumble around groaning.") {
+                        SetFontSize (50)
+                        msg ("")
+                        msg ("")
+                        msg ("<center>{colour:red:Game Over}</center>")
+                        wait {
+                          SetFontSize (20)
+                          msg ("")
+                          msg ("")
+                          msg ("")
+                          msg ("{command:reset scene 3:Restart}")
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]]></script>
+        </command>
+        <command name="Desk papers">
+          <pattern>Desk papers</pattern>
+          <script>
+            MoveObject (player, Scene 4)
+          </script>
+        </command>
+      </object>
+      <object name="Scene_4">
+        <inherit name="editor_room" />
+        <firstenter type="script">
+          ClearScreenGetTime
+          player.scene = 4
+          type ("Amidst the paper chaos on the desk, it’s hard to figure out where to begin. You fumble as you up each document, trying hard to control your fingers to avoid ruining anything.") {
+            ClearScreenGetTime
+            type ("Your eyes trail the words, but nothing worthwhile is on them.") {
+              ClearScreenGetTime
+              type ("Picking them up and putting them up hastily you spill your half-drank coffee from earlier this morning.") {
+                ClearScreenGetTime
+                type ("Now the documents are covered in coffee alongside your desk.") {
+                  MoveObject (player, Office Player)
+                }
+              }
+            }
+          }
+        </firstenter>
+        <beforeenter type="script">
+          if (Scene_4.visited) {
+            msg ("To be continued!")
+          }
+        </beforeenter>
+      </object>
     </object>
     <object name="Electrical Room">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("Electrical Room") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 8">
-        <inherit name="eastdirection" />
-      </exit>
     </object>
     <object name="Kitchen">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          case (5) {
+            MoveObject (player, Scene_5)
+          }
+          default {
+            ClearScreenGetTime
+            type ("The Kitchen") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="northeast" to="Hallway 7">
-        <inherit name="northeastdirection" />
-      </exit>
-      <exit alias="southwest" to="Hallway 4">
-        <inherit name="southwestdirection" />
-      </exit>
+      <object name="Scene_5">
+        <inherit name="editor_room" />
+        <firstenter type="script">
+          ClearScreenGetTime
+          type ("The kitchen is miraculously deserted, but you don’t know how long it’ll last.") {
+            ClearScreenGetTime
+            type ("You take a deep breath, trying to relax, but the zombie makes a sudden jerk toward the far countertop before your heart rate can settle.") {
+              ClearScreenGetTime
+              type ("With your willpower focused on keeping the zombie in place, every instinct is screaming at you to get out of the kitchen as quickly as possible, you quickly look past it to see a plastic bag of groceries on the counter.") {
+                ClearScreenGetTime
+                type ("You can make out a random assortment of food inside, including a loaf of bread, crackers, a few apples, a bundle of carrots, a couple of potatoes, and a small bag of candy.") {
+                  ClearScreenGetTime
+                  type ("There is absolutely no meat so you aren’t sure what the zombie is so intent on. You wonder if all the movies were wrong, but there’s only one way to find out for sure.") {
+                    MoveObject (player, Kitchen)
+                  }
+                }
+              }
+            }
+          }
+        </firstenter>
+        <beforeenter type="script">
+          if (Scene_5.visited) {
+            ClearScreenGetTime
+            type ("The Kitchen") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              if (not player.found_potato) {
+                msg ("{command:Let zombie food:Let the zombie go to the food.}")
+              }
+              msg ("{command:Leave kitchen:Leave the Kitchen.}")
+            }
+          }
+        </beforeenter>
+        <command name="Let zombie food">
+          <pattern>Let zombie food</pattern>
+          <script>
+            ClearScreenGetTime
+            type ("You take a furtive glance out the doors, fully aware that no one can see you anyway, and are relieved to see no one approaching.") {
+              ClearScreenGetTime
+              type ("You sigh, exasperated at your zombie self but beginning to understand that pacifying it now will likely make it happier in the long run.") {
+                ClearScreenGetTime
+                type ("You look around again, listening intently for footsteps, but there’s nothing. With a sideways glance at your zombified, useless body, you let it go towards the grocery bag.") {
+                  ClearScreenGetTime
+                  type ("It was like you’d flung it out of a cannon. A split second after you let go, the grocery bag is on the floor and there is food everywhere.") {
+                    ClearScreenGetTime
+                    type ("An apple has nearly rolled out the furthest door, the crackers are certainly dust, and you chuckle to see the carrots had fallen together and stayed a cohesive bunch.") {
+                      ClearScreenGetTime
+                      type ("As you look back at the cause of the carnage, you stare dumbfounded. ") {
+                        ClearScreenGetTime
+                        type ("Clutched in each of your zombified fists is a potato, and you watch in horror as your body crunches down the last third of one of the potatoes.") {
+                          ClearScreenGetTime
+                          type ("You have no explanation for its behaviour and all your attempts to make your body release the second potato fail completely. You have to get away from here, and fast.") {
+                            player.found_potato = true
+                            MoveObject (player, Kitchen)
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          </script>
+        </command>
+        <command name="Leave kitchen">
+          <pattern>Leave kitchen</pattern>
+          <script><![CDATA[
+            ClearScreenGetTime
+            type ("You really don’t want to risk running into anyone and take a quick peek out the door.") {
+              msg ("<center>No one seems to be nearby.")
+              wait {
+                ClearScreenGetTime
+                type ("You can feel the zombie’s protests but steer it out the door anyways.") {
+                  ClearScreenGetTime
+                  type ("As you turn the corner, your body bounces off of something.") {
+                    msg ("<center>Something alive.")
+                    wait {
+                      player.scene = 6
+                      MoveObject (player, Hallway 5)
+                    }
+                  }
+                }
+              }
+            }
+          ]]></script>
+        </command>
+      </object>
     </object>
     <object name="Foyer">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        switch (player.scene) {
+          default {
+            ClearScreenGetTime
+            type ("The Foyer") {
+              type ("The door seems to be locked.") {
+                MoveObject (player, player.prev)
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="west" to="Hallway 6">
-        <inherit name="westdirection" />
-      </exit>
       <exit name="Locked Path" alias="Locked Path" to="Mystery Path">
         <inherit name="eastdirection" />
         <locked />
@@ -372,21 +828,6 @@
           <inherit name="editor_room" />
         </object>
       </exit>
-      <object name="Hallway 3">
-        <inherit name="editor_room" />
-        <beforeenter type="script">
-          ClearScreen
-        </beforeenter>
-        <exit alias="south" to="Hallway 4">
-          <inherit name="southdirection" />
-        </exit>
-        <exit alias="west" to="Office Friendly">
-          <inherit name="westdirection" />
-        </exit>
-        <exit alias="north" to="Hallway 2">
-          <inherit name="northdirection" />
-        </exit>
-      </object>
     </object>
   </object>
   <object name="Hallways">
@@ -396,113 +837,261 @@
     <object name="Hallway 1">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          case (2) {
+            type ("Labratory Corridor") {
+              type ("You know you should be headed for your office, but your body urges you to wander around.") {
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("{command:wander:Let your body wander around.}")
+                msg ("{command:lab:To the Lab.}")
+                msg ("{command:hallway_2:To the Northern Wing.}")
+              }
+            }
+          }
+          default {
+            type ("Labratory Corridor") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:lab:To the Lab.}")
+              msg ("{command:hallway_2:To the Northern Wing.}")
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="north" to="Lab">
-        <inherit name="northdirection" />
-      </exit>
-      <exit alias="west" to="Hallway 2">
-        <inherit name="westdirection" />
-      </exit>
+      <command name="wander">
+        <pattern>wander</pattern>
+        <script>
+          ClearScreenGetTime
+          type ("You think there’s a chance your body’s zombie intuition is onto something, so you let it pilot itself to see what happens.") {
+            ClearScreenGetTime
+            type (" After spinning around looking for all the world like the drunk you never were, your body begins to walk.") {
+              msg ("Very... very... slooowwwly.")
+              wait {
+                ClearScreenGetTime
+                type ("Luckily, it takes the same quiet hallway you wanted to take anyway. You follow as it crashes into walls and trips over the tiled floor, so fixated you don’t realize you’ve followed it all the way to the kitchen.") {
+                  ClearScreenGetTime
+                  type ("Knowing the kitchen is a hotspot for not only people, but the rumor mill, you quickly try to pull control back and stop your body from entering the kitchen, but it is too late.") {
+                    ClearScreenGetTime
+                    type ("Your body enters the kitchen and you hesitate only a moment before peering around the doorframe, braced for the worst.") {
+                      player.scene = 5
+                      MoveObject (player, Kitchen)
+                    }
+                  }
+                }
+              }
+            }
+          }
+        </script>
+      </command>
     </object>
     <object name="Hallway 2">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          case (2) {
+            type ("Northern Wing") {
+              type ("Vending machines are lined up against the wall.") {
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("{command:conference_room:A door with a sign says \"Conference Room\".}")
+                msg ("{command:hallway_1:To the Labratory Corridor.}")
+                msg ("{command:hallway_3:To the North-West Wing.}")
+                msg ("{command:hallway_8:To the North-East Wing.}")
+              }
+            }
+          }
+          default {
+            type ("Northern Wing") {
+              type ("Vending machines are lined up against the wall.") {
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("")
+                msg ("{command:conference_room:A door with a sign says \"Conference Room\".}")
+                msg ("{command:hallway_1:To the Labratory Corridor.}")
+                msg ("{command:hallway_3:To the North-West Wing.}")
+                msg ("{command:hallway_8:To the North-East Wing.}")
+              }
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 1">
-        <inherit name="eastdirection" />
-      </exit>
-      <exit alias="north" to="Conference Room">
-        <inherit name="northdirection" />
-      </exit>
-      <exit alias="southeast" to="Hallway 8">
-        <inherit name="southeastdirection" />
-      </exit>
-      <exit alias="southwest" to="Hallway 3">
-        <inherit name="southwestdirection" />
-      </exit>
+    </object>
+    <object name="Hallway 3">
+      <inherit name="editor_room" />
+      <beforeenter type="script">
+        ClearScreenGetTime
+        switch (player.scene) {
+          default {
+            type ("North-West Wing") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:hallway_3:To Northern Wing.}")
+              msg ("{command:office_bobby:A door has a sign that says \"Bobby's Office\".}")
+              msg ("{command:hallway_4:To South-West Wing.}")
+            }
+          }
+        }
+      </beforeenter>
     </object>
     <object name="Hallway 4">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          default {
+            type ("South-West Wing") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:hallway_3:The hallway continues North.}")
+              msg ("{command:office_boss:A door with a sign \"Boss's Office\".}")
+              msg ("{command:office_selfish:NPC A's Office}")
+              msg ("{command:kitchen:A door. It smells awefully good. It must be the Kitchen.}")
+              msg ("{command:hallway_5:To the South Wing.}")
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="north" to="Hallway 3">
-        <inherit name="northdirection" />
-      </exit>
-      <exit alias="west" to="Office Boss">
-        <inherit name="westdirection" />
-      </exit>
-      <exit alias="south" to="Hallway 5">
-        <inherit name="southdirection" />
-      </exit>
-      <exit alias="southwest" to="Office Selfish">
-        <inherit name="southwestdirection" />
-      </exit>
-      <exit alias="east" to="Kitchen">
-        <inherit name="eastdirection" />
-      </exit>
     </object>
     <object name="Hallway 5">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          case (6) {
+            MoveObject (player, Scene_6)
+          }
+          default {
+            type ("Southern Wing") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:hallway_4:To South-West Wing.}")
+              msg ("{command:office_player:This door looks familiar. It's your office!.}")
+              msg ("{command:hallway_6:To South-East Wing.}")
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="east" to="Hallway 6">
-        <inherit name="eastdirection" />
-      </exit>
-      <exit alias="north" to="Hallway 4">
-        <inherit name="northdirection" />
-      </exit>
+      <object name="Scene_6">
+        <inherit name="editor_room" />
+        <firstenter type="script"><![CDATA[
+          ClearScreenGetTime
+          type ("It’s your colleague and your work bestie, Bobby.") {
+            msg ("<center>-Hey buddy, you look awful. Everything okay?")
+            wait {
+              type ("Bobby is one of the most caring people you’ve ever met.") {
+                ClearScreenGetTime
+                type ("He’ll drop everything to support you in any way he can, but you’ve known him long enough to know how prone he is to panic.") {
+                  ClearScreenGetTime
+                  type ("While you’re confident that he’ll help you out, you’re worried that his panic might alert everyone and word will get to your boss about what happened.") {
+                    msg ("")
+                    msg ("")
+                    msg ("")
+                    msg ("")
+                    msg ("{command:Flee scene:Flee the Scene.}")
+                    msg ("{command:Be social:Be Social.}")
+                  }
+                }
+              }
+            }
+          }
+        ]]></firstenter>
+        <beforeenter type="script">
+        </beforeenter>
+        <command name="Flee scene">
+          <pattern>Flee scene</pattern>
+          <script>
+            ClearScreenGetTime
+            type ("As much as you normally love catching up with your friend, you can’t risk anyone finding out about your mess-up.") {
+              ClearScreenGetTime
+              type ("Your body mumbles something about going back to work.") {
+                ClearScreenGetTime
+                type ("You back away before they can ask any follow-up questions and hope you didn’t stumble too much on your way out.") {
+                  ClearScreenGetTime
+                  type ("Maybe you should’ve taken the long way to the office after all.") {
+                    MoveObject (player, Office Player)
+                  }
+                }
+              }
+            }
+          </script>
+        </command>
+        <command name="Be social">
+          <pattern>Be social</pattern>
+        </command>
+      </object>
     </object>
     <object name="Hallway 6">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          default {
+            type ("South-East Wing") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:hallway_7:To the East Wing.}")
+              msg ("{command:foyer:A door with a sign \"The Foyer\".}")
+              msg ("{command:hallway_5:To the South Wing.}")
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="west" to="Hallway 5">
-        <inherit name="westdirection" />
-      </exit>
-      <exit alias="north" to="Hallway 7">
-        <inherit name="northdirection" />
-      </exit>
-      <exit alias="east" to="Foyer">
-        <inherit name="eastdirection" />
-      </exit>
     </object>
     <object name="Hallway 7">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          default {
+            type ("Eastern Wing") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:hallway_8:To the North-East Wing.}")
+              msg ("{command:kitchen:A door with a sign \"Kitchen\".}")
+              msg ("{command:hallway_5:To the South Wing.}")
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="northwest" to="Hallway 8">
-        <inherit name="northwestdirection" />
-      </exit>
-      <exit alias="southeast" to="Hallway 6">
-        <inherit name="southeastdirection" />
-      </exit>
-      <exit alias="south" to="Kitchen">
-        <inherit name="southdirection" />
-      </exit>
     </object>
     <object name="Hallway 8">
       <inherit name="editor_room" />
       <beforeenter type="script">
-        ClearScreen
+        ClearScreenGetTime
+        switch (player.scene) {
+          default {
+            type ("North-East Wing") {
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("")
+              msg ("{command:hallway_2:To the Northern Wing.}")
+              msg ("{command:meeting_room:A door with a sign \"Meeting Room\".}")
+              msg ("{command:electrical_room:A door with a sign \"Electrical Room\".}")
+              msg ("{command:hallway_7:To the North-East Wing.}")
+            }
+          }
+        }
       </beforeenter>
-      <exit alias="southeast" to="Hallway 7">
-        <inherit name="southeastdirection" />
-      </exit>
-      <exit alias="west" to="Electrical Room">
-        <inherit name="westdirection" />
-      </exit>
-      <exit alias="east" to="Meeting Room">
-        <inherit name="eastdirection" />
-      </exit>
-      <exit alias="north" to="Hallway 2">
-        <inherit name="northdirection" />
-      </exit>
     </object>
   </object>
   <object name="Title Screen">
@@ -511,6 +1100,7 @@
     <objectslistprefix type="string"></objectslistprefix>
     <beforeenter type="script"><![CDATA[
       ClearScreen
+      audio_script
       init_starting_variables
       SetFontSize (40)
       TextFX_Unscramble ("<center>Already Dead:</center>", 200, 1)
@@ -543,6 +1133,7 @@
           msg ("")
           TextFX_Typewriter ("Press Any Key To Continue", 10)
           SetTimerScript (txt) {
+            player.scene_1 = true
             MoveObject (player, Lab)
           }
         }
@@ -559,20 +1150,182 @@
       MoveObject (game.pov, player.last)
     </beforeenter>
   </object>
-  <command name="go temp room">
-    <pattern type="string">go temp room</pattern>
+  <command name="hallway_1">
+    <pattern>hallway_1</pattern>
     <script>
-      game.pov.last = game.pov.parent
-      game.pov.parent = TempRoom
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 1)
+    </script>
+  </command>
+  <command name="hallway_2">
+    <pattern>hallway_2</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 2)
+    </script>
+  </command>
+  <command name="hallway_3">
+    <pattern>hallway_3</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 3)
+    </script>
+  </command>
+  <command name="hallway_4">
+    <pattern>hallway_4</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 4)
+    </script>
+  </command>
+  <command name="hallway_5">
+    <pattern>hallway_5</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 5)
+    </script>
+  </command>
+  <command name="hallway_6">
+    <pattern>hallway_6</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 6)
+    </script>
+  </command>
+  <command name="hallway_7">
+    <pattern>hallway_7</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 7)
+    </script>
+  </command>
+  <command name="hallway_8">
+    <pattern>hallway_8</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Hallway 8)
+    </script>
+  </command>
+  <command name="lab">
+    <pattern>lab</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Lab)
+    </script>
+  </command>
+  <command name="conference_room">
+    <pattern>conference_room</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Conference Room)
+    </script>
+  </command>
+  <command name="meeting_room">
+    <pattern>meeting_room</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Meeting Room)
+    </script>
+  </command>
+  <command name="office_bobby">
+    <pattern>office_bobby</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Office Bobby)
+    </script>
+  </command>
+  <command name="office_boss">
+    <pattern>office_boss</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Office Boss)
+    </script>
+  </command>
+  <command name="office_npc_a">
+    <pattern>office_npc_a</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Office NPC A)
+    </script>
+  </command>
+  <command name="office_player">
+    <pattern>office_player</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Office Player)
+    </script>
+  </command>
+  <command name="electrical_room">
+    <pattern>electrical_room</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Electrical Room)
+    </script>
+  </command>
+  <command name="kitchen">
+    <pattern>kitchen</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Kitchen)
+    </script>
+  </command>
+  <command name="foyer">
+    <pattern>foyer</pattern>
+    <script>
+      player.prev = player.parent
+      add_time (player.wander_time)
+      MoveObject (player, Foyer)
+    </script>
+  </command>
+  <command name="reset scene 1">
+    <pattern type="string">reset scene 1</pattern>
+    <script>
+      init_starting_variables
+      MoveObject (player, Lab)
+    </script>
+  </command>
+  <command name="reset scene 2">
+    <pattern>reset scene 2</pattern>
+    <script>
+      reset_scene_2
+    </script>
+  </command>
+  <command name="reset scene 3">
+    <pattern>reset scene 3</pattern>
+    <script>
+      reset_scene_3
     </script>
   </command>
   <function name="init_starting_variables">
     game.time = (9*60)+27
+    game.time_end = (15*60)+30
+    game.sound_speed = 1
+    player.scene = 1
     player.explored_lab = false
     player.in_body = false
     player.found_time_limit = false
     player.wait_for_press = false
-    player.found_potatoe = false
+    player.found_potato = false
+    player.objective = ""
+    player.anger = 0
+    player.wander_time = 2
   </function>
   <function name="ClearScreenGetTime">
     ClearScreen
@@ -590,13 +1343,16 @@
     }
     time_limit_string = ""
     if (player.found_time_limit) {
-      time_limit_string = time_limit_string + "<right>               " + "Time Remaining: "
+      time_limit_string = time_limit_string + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + "Time Remaining: "
       minutes_remaining = ((15 * 60) + 30) - time_in_min
       time_limit_string = time_limit_string + (minutes_remaining / 60) + "hr" + (minutes_remaining % 60) + "min" + "</right>"
     }
-    msg ("<left>Clock: " + hours + ":" + str + minutes + "</left>" + time_limit_string)
-    msg ("<right>-----------------------------</right>")
     SetFontSize (20)
+    msg ("<left>Clock: " + hours + ":" + str + minutes + "</left>" + time_limit_string)
+    msg ("<right>----------------------------------------------------------------------------------------------------------------------</right>")
+    if (not player.objective = "") {
+      msg ("<center>" + player.objective)
+    }
   ]]></function>
   <function name="TypewriterDone" parameters="param">
     request (Show, "Command")
@@ -614,7 +1370,58 @@
       }
     }
   </function>
+  <function name="sound_speed_increment" parameters="id, increment">
+    game.sound_speed = game.sound_speed + increment
+    JS.set_audio_speed (id, game.sound_speed)
+  </function>
+  <function name="add_time" parameters="time">
+    game.time = game.time + time
+    // increment = time / ((15.0 * 60.0) + 30.0)
+    // sound_speed_increment ("curr_audio", increment)
+  </function>
+  <function name="temp_room">
+    game.pov.last = game.pov.parent
+    game.pov.parent = TempRoom
+  </function>
+  <function name="type" parameters="text, script">
+    TextFX_Typewriter (text, 10)
+    SetTimerScript (txt, script)
+  </function>
+  <function name="reset_scene_2">
+    game.time = player.time_scene_2
+    player.scene = 2
+    Scene_2.visited = false
+    MoveObject (player, Lab)
+  </function>
+  <function name="reset_scene_3">
+    game.time = player.time_scene_3
+    player.scene = player.curr_scene
+    player.anger = player.anger_scene_3
+    Scene_3.visited = false
+    MoveObject (player, Office Player)
+  </function>
+  <function name="add_anger" parameters="num">
+    player.anger = player.anger + num
+  </function>
+  <function name="audio_script_1">
+    DestroyAudio ("curr_audio_2")
+    PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio", false, true) {
+      audio_script_2
+    }
+  </function>
+  <function name="audio_script_2">
+    DestroyAudio ("curr_audio_1")
+    PlaySound ("tune_G_Minor_Version.wav", false, false, "curr_audio_2", false, true) {
+      audio_script_1
+    }
+  </function>
+  <function name="audio_script">
+    PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio", false, true) {
+      audio_script_2
+    }
+  </function>
   <javascript src="glue.js" />
+  <javascript src="audio.js" />
   <timer name="txt">
     <interval>1</interval>
   </timer>
