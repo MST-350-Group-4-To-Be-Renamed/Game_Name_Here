@@ -71,7 +71,7 @@
 		    };
 		})(jQuery);
 	  
-	         		                                                        ]]></js>
+	         		                                                                    ]]></js>
     <publishfileextensions>*.jpg;*.jpeg;*.png;*.gif;*.js;*.wav;*.mp3;*.htm;*.html;*.svg;*.ogg;*.ogv</publishfileextensions>
     <roomenter type="script">
     </roomenter>
@@ -1087,7 +1087,7 @@
               msg ("{command:hallway_2:To the Northern Wing.}")
               msg ("{command:meeting_room:A door with a sign \"Meeting Room\".}")
               msg ("{command:electrical_room:A door with a sign \"Electrical Room\".}")
-              msg ("{command:hallway_7:To the North-East Wing.}")
+              msg ("{command:hallway_7:To the Eastern Wing.}")
             }
           }
         }
@@ -1405,7 +1405,7 @@
   </function>
   <function name="audio_script_1">
     DestroyAudio ("curr_audio_2")
-    PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio", false, true) {
+    PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio_1", false, true) {
       audio_script_2
     }
   </function>
@@ -1416,7 +1416,7 @@
     }
   </function>
   <function name="audio_script">
-    PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio", false, true) {
+    PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio_1", false, true) {
       audio_script_2
     }
   </function>
