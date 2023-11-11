@@ -71,7 +71,7 @@
 		    };
 		})(jQuery);
 	  
-	         		                                                                    ]]></js>
+	         		                                                                        ]]></js>
     <publishfileextensions>*.jpg;*.jpeg;*.png;*.gif;*.js;*.wav;*.mp3;*.htm;*.html;*.svg;*.ogg;*.ogv</publishfileextensions>
     <roomenter type="script">
     </roomenter>
@@ -123,9 +123,6 @@
                       type ("Huh, must’ve been anxious for no reason. But if the body is stirring, then why are you still hovering over it?") {
                         msg ("<center>The body groans, but does nothing to answer your question.</center>")
                         wait {
-                          msg ("")
-                          msg ("")
-                          msg ("")
                           msg ("")
                           msg ("")
                           msg ("You choose to:")
@@ -564,7 +561,7 @@
               if (not player.cute_videos) {
                 msg ("{command:Cute videos:Look at the Videos.}")
               }
-              if (player.anger >= 4) {
+              if (player.anger >= 1) {
                 msg ("{command:Take nap 2:Take a Nap.}")
               }
               msg ("{command:Desk papers:Have a look through the papers on the desk.}")
@@ -573,15 +570,27 @@
         ]]></beforeenter>
         <firstenter type="script">
           player.objective = ""
+          ClearScreenGetTime
           player.curr_scene = player.scene
           player.anger_scene_3 = player.anger
           player.time_scene_3 = game.time
           player.filing_cabinet = false
           player.cute_videos = false
           player.desk_papers = false
-          type ("You manage to get to the office without anyone seeing you. You sit down at the desk and start sifting through the facility’s digital network.") {
-            type ("You won’t find much help there, but one of your colleagues shared some videos of their pets doing silly things and it piques your diminishing attention span.") {
-              MoveObject (player, Office Player)
+          if (player.scene = 2) {
+            type ("You manage to get to the office without anyone seeing you. You sit down at the desk and start sifting through the facility’s digital network.") {
+              ClearScreenGetTime
+              type ("You won’t find much help there, but one of your colleagues shared some videos of their pets doing silly things and it piques your diminishing attention span.") {
+                MoveObject (player, Office Player)
+              }
+            }
+          }
+          else {
+            type ("You manage to get to the office. You sit down at the desk and start sifting through the facility’s digital network.") {
+              ClearScreenGetTime
+              type ("You won’t find much help there, but one of your colleagues shared some videos of their pets doing silly things and it piques your diminishing attention span.") {
+                MoveObject (player, Office Player)
+              }
             }
           }
         </firstenter>
@@ -656,7 +665,7 @@
         <command name="Desk papers">
           <pattern>Desk papers</pattern>
           <script>
-            MoveObject (player, Scene 4)
+            MoveObject (player, Scene_4)
           </script>
         </command>
       </object>
@@ -936,9 +945,9 @@
               msg ("")
               msg ("")
               msg ("")
-              msg ("{command:hallway_3:To Northern Wing.}")
+              msg ("{command:hallway_2:To the Northern Wing.}")
               msg ("{command:office_bobby:A door has a sign that says \"Bobby's Office\".}")
-              msg ("{command:hallway_4:To South-West Wing.}")
+              msg ("{command:hallway_4:To the South-West Wing.}")
             }
           }
         }
@@ -1100,19 +1109,19 @@
     <objectslistprefix type="string"></objectslistprefix>
     <beforeenter type="script"><![CDATA[
       ClearScreen
-      // audio_script
-      PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "aud", false, false) {
-      }
-      SetTimeout (2) {
-        JS.fade_out ("aud", 1, "tune_G_Minor_Version.wav")
-      }
+      audio_script
+      // PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "aud", false, false) {
+        // }
+      // SetTimeout (2) {
+        // JS.fade_out ("aud", 1, "tune_G_Minor_Version.wav")
+        // }
       init_starting_variables
       SetFontSize (40)
       TextFX_Unscramble ("<center>Already Dead:</center>", 200, 1)
       TextFX_Unscramble ("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Huge Discovery", 200, 1)
       SetFontSize (20)
       TextFX_Unscramble ("<center>(still a working title)</center>", 100, 1)
-      SetTimeout (10) {
+      SetTimeout (5) {
         ClearScreen
         SetFontSize (18)
         msg ("")
@@ -1166,6 +1175,9 @@
   <command name="hallway_2">
     <pattern>hallway_2</pattern>
     <script>
+      if (player.scene = 2 and player.parent = Hallway 1) {
+        player.anger = player.anger + 1
+      }
       player.prev = player.parent
       add_time (player.wander_time)
       MoveObject (player, Hallway 2)
@@ -1424,16 +1436,6 @@
     PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio_1", false, true) {
       audio_script_2
     }
-  </function>
-  <function name="fade_out" parameters="aud_id">
-    time = 1000
-    JS.eval ("ASLEvent('set_time_js',Date.now());")
-    init = player.seconds
-    msg (init)
-    x = 0.0
-    SetAudioVolume ("aud", 0)
-    // string = "$('#'" + aud_id + ").animate({volume: 0.0}, time);"
-    // JS.eval (string)
   </function>
   <javascript src="glue.js" />
   <javascript src="audio.js" />
