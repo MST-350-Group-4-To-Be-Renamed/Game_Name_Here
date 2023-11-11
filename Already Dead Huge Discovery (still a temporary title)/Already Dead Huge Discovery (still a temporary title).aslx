@@ -1100,14 +1100,19 @@
     <objectslistprefix type="string"></objectslistprefix>
     <beforeenter type="script"><![CDATA[
       ClearScreen
-      audio_script
+      // audio_script
+      PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "aud", false, false) {
+      }
+      SetTimeout (2) {
+        JS.fade_out ("aud", 1, "tune_G_Minor_Version.wav")
+      }
       init_starting_variables
       SetFontSize (40)
       TextFX_Unscramble ("<center>Already Dead:</center>", 200, 1)
       TextFX_Unscramble ("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Huge Discovery", 200, 1)
       SetFontSize (20)
       TextFX_Unscramble ("<center>(still a working title)</center>", 100, 1)
-      SetTimeout (5) {
+      SetTimeout (10) {
         ClearScreen
         SetFontSize (18)
         msg ("")
@@ -1419,6 +1424,16 @@
     PlaySound ("ending_tune_perhaps_slower_bits_included.wav", false, false, "curr_audio_1", false, true) {
       audio_script_2
     }
+  </function>
+  <function name="fade_out" parameters="aud_id">
+    time = 1000
+    JS.eval ("ASLEvent('set_time_js',Date.now());")
+    init = player.seconds
+    msg (init)
+    x = 0.0
+    SetAudioVolume ("aud", 0)
+    // string = "$('#'" + aud_id + ").animate({volume: 0.0}, time);"
+    // JS.eval (string)
   </function>
   <javascript src="glue.js" />
   <javascript src="audio.js" />
