@@ -95,9 +95,9 @@
     if (DictionaryContains(game.audiofinishedcallback,id)) {
     invoke (ScriptDictionaryItem(game.audiofinishedcallback,id))
     dictionary remove(game.audiofinishedcallback,id)
-    if (DictionaryCount(game.audiofinishedcallback)>0){
-    DoAudioSync
-    }
+    //if (DictionaryCount(game.audiofinishedcallback)>0){
+    //DoAudioSync
+    //}
     }
     }
   </function>

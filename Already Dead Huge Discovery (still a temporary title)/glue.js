@@ -5,4 +5,5 @@ function Hook(callback) {
         ASLEvent(callback, e.keyCode.toString());
     };
     window.addEventListener("keydown", elem);
+    window.addEventListener("mousedown", elem);
 }
